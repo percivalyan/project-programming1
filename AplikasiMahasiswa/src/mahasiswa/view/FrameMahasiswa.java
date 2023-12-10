@@ -3,7 +3,36 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package mahasiswa.view;
+import java.awt.Desktop;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import javax.swing.JTable;
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.FontFactory;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 
+import static groovy.inspect.Inspector.print;
+import java.awt.Desktop;
+import java.awt.print.PrinterJob;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import javax.swing.JFrame;
 import java.sql.*;
 import java.sql.DriverManager;
@@ -24,19 +53,43 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
+import mahasiswa.dao.imp.MahasiswaDAOImp;
+import mahasiswa.koneksi.KoneksiDatabase;
 import mahasiswa.model.Mahasiswa;
+
+import java.sql.Connection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRResultSetDataSource;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.util.JRLoader;
+import net.sf.jasperreports.engine.xml.JRXmlLoader;
+import net.sf.jasperreports.view.JasperViewer;
 
 /**
  *
  * @author HP
  */
 public class FrameMahasiswa extends javax.swing.JFrame {
+
+    private String jasperPrint;
 //    public Statement st;
 //    public ResultSet rs;
 //    Connection cn = mahasiswa.koneksi.KoneksiDatabase.koneksi();
@@ -67,7 +120,7 @@ public class FrameMahasiswa extends javax.swing.JFrame {
         setResizable(false);
 
         // Menetapkan ukuran frame
-        setSize(500, 650);
+        setSize(560, 700);
 
         // Menetapkan operasi default ketika tombol close diklik
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -79,7 +132,7 @@ public class FrameMahasiswa extends javax.swing.JFrame {
         model.addColumn("ALAMAT");
         Tabel_Data.setModel(model);
     }
-   
+  
     
     private void initTableListener() {
     Tabel_Data.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
@@ -133,6 +186,7 @@ public class FrameMahasiswa extends javax.swing.JFrame {
         btn_update = new javax.swing.JButton();
         btn_hapus = new javax.swing.JButton();
         btn_reset = new javax.swing.JButton();
+        btn_cetak = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
         CariTextField = new javax.swing.JTextField();
@@ -144,7 +198,7 @@ public class FrameMahasiswa extends javax.swing.JFrame {
 
         titlePanel.setBackground(new java.awt.Color(204, 255, 102));
 
-        jLabel1.setFont(new java.awt.Font("Roboto Black", 1, 18)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Roboto Black", 1, 24)); // NOI18N
         jLabel1.setText("FORMULIR DATA MAHASISWA");
         jLabel1.setVerifyInputWhenFocusTarget(false);
 
@@ -152,27 +206,31 @@ public class FrameMahasiswa extends javax.swing.JFrame {
         titlePanel.setLayout(titlePanelLayout);
         titlePanelLayout.setHorizontalGroup(
             titlePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(titlePanelLayout.createSequentialGroup()
-                .addGap(112, 112, 112)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, titlePanelLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(79, 79, 79))
         );
         titlePanelLayout.setVerticalGroup(
             titlePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(titlePanelLayout.createSequentialGroup()
-                .addContainerGap()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, titlePanelLayout.createSequentialGroup()
+                .addContainerGap(15, Short.MAX_VALUE)
                 .addComponent(jLabel1)
-                .addContainerGap(15, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         jPanel1.setBackground(new java.awt.Color(102, 255, 51));
 
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel2.setText("NIM");
 
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel3.setText("NO. TELP");
 
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel4.setText("NAMA");
 
+        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel5.setText("ALAMAT");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -187,12 +245,12 @@ public class FrameMahasiswa extends javax.swing.JFrame {
                     .addComponent(jLabel3)
                     .addComponent(jLabel2))
                 .addGap(124, 124, 124)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(nimTextField, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(NoHpTextField, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(namaTextField, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(alamatTextField, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addGap(2, 2, 2))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(namaTextField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 324, Short.MAX_VALUE)
+                    .addComponent(NoHpTextField, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(nimTextField, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(alamatTextField))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -246,12 +304,19 @@ public class FrameMahasiswa extends javax.swing.JFrame {
             }
         });
 
+        btn_cetak.setText("PRINT");
+        btn_cetak.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_cetakActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(41, 41, 41)
                 .addComponent(btn_tambah)
                 .addGap(18, 18, 18)
                 .addComponent(btn_update)
@@ -259,7 +324,9 @@ public class FrameMahasiswa extends javax.swing.JFrame {
                 .addComponent(btn_hapus)
                 .addGap(18, 18, 18)
                 .addComponent(btn_reset)
-                .addGap(70, 70, 70))
+                .addGap(18, 18, 18)
+                .addComponent(btn_cetak)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -269,7 +336,8 @@ public class FrameMahasiswa extends javax.swing.JFrame {
                     .addComponent(btn_tambah)
                     .addComponent(btn_update)
                     .addComponent(btn_hapus)
-                    .addComponent(btn_reset))
+                    .addComponent(btn_reset)
+                    .addComponent(btn_cetak))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -289,7 +357,7 @@ public class FrameMahasiswa extends javax.swing.JFrame {
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(45, 45, 45)
+                .addGap(60, 60, 60)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel6)
                     .addGroup(jPanel3Layout.createSequentialGroup()
@@ -297,7 +365,7 @@ public class FrameMahasiswa extends javax.swing.JFrame {
                         .addComponent(CariTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(btn_cari)))
-                .addContainerGap(45, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -328,18 +396,15 @@ public class FrameMahasiswa extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(titlePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(20, 20, 20))
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane1)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(titlePanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -353,10 +418,10 @@ public class FrameMahasiswa extends javax.swing.JFrame {
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 228, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(18, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        setSize(new java.awt.Dimension(516, 584));
+        setSize(new java.awt.Dimension(547, 572));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
@@ -372,6 +437,7 @@ public class FrameMahasiswa extends javax.swing.JFrame {
     }
 
     mhsController.insert();
+    //mhsController.update();
     mhsController.tampilkanData();
     }//GEN-LAST:event_btn_tambahActionPerformed
     
@@ -431,6 +497,63 @@ if (mhsController == null) {
     // Lakukan pencarian berdasarkan nama
     mhsController.cariNama(namaCari);
     }//GEN-LAST:event_btn_cariActionPerformed
+
+    private void btn_cetakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_cetakActionPerformed
+   Document document = new Document();
+    try {
+        // Mendapatkan waktu saat ini untuk digunakan sebagai nama file PDF
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
+        String timestamp = sdf.format(new Date());
+
+        // Nama file PDF
+        String pdfFileName = "Data_Mahasiswa_" + timestamp + ".pdf";
+
+        // Lokasi penyimpanan file PDF
+        String pdfFilePath = System.getProperty("user.home") + File.separator + pdfFileName;
+
+        PdfWriter.getInstance(document, new FileOutputStream(pdfFilePath));
+
+        document.open();
+
+        // Judul PDF
+        Font fontTitle = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16, BaseColor.BLACK);
+        Paragraph title = new Paragraph("DATA MAHASISWA", fontTitle);
+        title.setAlignment(Element.ALIGN_CENTER);
+        document.add(title);
+        document.add(new Paragraph("\n")); // Baris kosong
+
+        // Tabel PDF
+        PdfPTable pdfTable = new PdfPTable(Tabel_Data.getColumnCount());
+        pdfTable.setWidthPercentage(100);
+
+        // Header
+        Font fontHeader = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 9, BaseColor.BLACK);
+        for (int i = 0; i < Tabel_Data.getColumnCount(); i++) {
+            PdfPCell cell = new PdfPCell(new Phrase(Tabel_Data.getColumnName(i), fontHeader));
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            pdfTable.addCell(cell);
+        }
+
+        // Data
+        Font fontData = FontFactory.getFont(FontFactory.HELVETICA, 8, BaseColor.BLACK);
+        for (int i = 0; i < Tabel_Data.getRowCount(); i++) {
+            for (int j = 0; j < Tabel_Data.getColumnCount(); j++) {
+                PdfPCell cell = new PdfPCell(new Phrase(String.valueOf(Tabel_Data.getValueAt(i, j)), fontData));
+                cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                pdfTable.addCell(cell);
+            }
+        }
+
+        document.add(pdfTable);
+
+        // Menutup dokumen dan menampilkan file PDF
+        document.close();
+        Desktop.getDesktop().open(new File(pdfFilePath));
+
+    } catch (DocumentException | IOException e) {
+        e.printStackTrace();
+    }
+    }//GEN-LAST:event_btn_cetakActionPerformed
     
    
     /**
@@ -531,6 +654,14 @@ if (mhsController == null) {
         this.Tabel_Data = Tabel_Data;
     }
 
+    public JButton getCETAK() {
+        return btn_cetak;
+    }
+
+    public void setCETAK(JButton CETAK) {
+        this.btn_cetak = CETAK;
+    }
+
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -539,6 +670,7 @@ if (mhsController == null) {
     private javax.swing.JTable Tabel_Data;
     private javax.swing.JTextField alamatTextField;
     private javax.swing.JButton btn_cari;
+    private javax.swing.JButton btn_cetak;
     private javax.swing.JButton btn_hapus;
     private javax.swing.JButton btn_reset;
     private javax.swing.JButton btn_tambah;
@@ -557,6 +689,8 @@ if (mhsController == null) {
     private javax.swing.JTextField nimTextField;
     private javax.swing.JPanel titlePanel;
     // End of variables declaration//GEN-END:variables
+
+  
 
 
 }

@@ -24,14 +24,14 @@ public class KoneksiDatabase {
 
             conn = DriverManager.getConnection(db, user, pass);
 
-            JOptionPane.showMessageDialog(null, "Hore, Berhasil", "Berhasil",
+            JOptionPane.showMessageDialog(null, "Berhasil", "Berhasil",
                     JOptionPane.INFORMATION_MESSAGE);
             System.out.println("Database Information:");
             System.out.println("Database Name: "+conn.getMetaData().getDatabaseProductName());
             System.out.println("Databae Versiion "+conn.getMetaData().getDatabaseProductVersion());
 
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Tidak ada Koneksi", "Error",
+            JOptionPane.showMessageDialog(null, "Gagal", "Gagal",
                     JOptionPane.ERROR_MESSAGE); // Perbaiki JOptionPane.INFORMATION_MESSAGE ke JOptionPane.ERROR_MESSAGE
             System.err.println(e.getMessage());
             System.exit(0);
