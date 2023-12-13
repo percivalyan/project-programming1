@@ -39,4 +39,3 @@ public class KoneksiDatabase {
         return conn; // Anda harus mengembalikan objek Connection setelah membuat koneksi
     }
 }
-

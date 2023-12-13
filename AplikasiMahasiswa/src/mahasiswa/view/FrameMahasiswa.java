@@ -196,7 +196,7 @@ public class FrameMahasiswa extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        titlePanel.setBackground(new java.awt.Color(204, 255, 102));
+        titlePanel.setBackground(new java.awt.Color(204, 204, 204));
 
         jLabel1.setFont(new java.awt.Font("Roboto Black", 1, 24)); // NOI18N
         jLabel1.setText("FORMULIR DATA MAHASISWA");
@@ -219,7 +219,7 @@ public class FrameMahasiswa extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        jPanel1.setBackground(new java.awt.Color(102, 255, 51));
+        jPanel1.setBackground(new java.awt.Color(204, 204, 204));
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel2.setText("NIM");
@@ -274,7 +274,7 @@ public class FrameMahasiswa extends javax.swing.JFrame {
                 .addContainerGap(14, Short.MAX_VALUE))
         );
 
-        jPanel2.setBackground(new java.awt.Color(102, 255, 102));
+        jPanel2.setBackground(new java.awt.Color(153, 153, 153));
 
         btn_tambah.setText("INSERT");
         btn_tambah.addActionListener(new java.awt.event.ActionListener() {
@@ -341,7 +341,7 @@ public class FrameMahasiswa extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel3.setBackground(new java.awt.Color(153, 255, 153));
+        jPanel3.setBackground(new java.awt.Color(153, 153, 153));
 
         jLabel6.setText("Pencarian Berdasarkan Nama:");
 
